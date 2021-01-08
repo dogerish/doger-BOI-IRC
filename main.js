@@ -35,6 +35,7 @@ rl.on("close", close);
 // relay every line to discord
 rl.on("line", input =>
 {
+	let options = {};
 	// commands
 	if (input.startsWith('/'))
 	{
@@ -56,9 +57,14 @@ rl.on("line", input =>
 				// put ping in front of message if there's a last author
 				repcmd(lastAuthor || "");
 				break;
+			// upload file
+			case "file":
+				options.files = [{ attachment: input.substr(space ? space.index + 1 : input.length) }];
+				input = "";
+				break;
 		}
 	}
-	channel.send(input).catch(console.error);
+	channel.send(input, options).catch(console.error);
 });
 
 // relay everything from the channel to terminal
