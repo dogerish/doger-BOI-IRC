@@ -23,8 +23,25 @@ const rl = readline.createInterface
 	output: process.stdout
 });
 
+// close everything
+function close()
+{
+	client.destroy();
+	rl.close();
+}
+
+// closing with ctrl-d or ctrl-c
+rl.on("close", close);
+
 // relay every line to discord
-rl.on("line", input => channel.send(input).catch(console.error));
+rl.on("line", input => 
+{
+	// quitting
+	if (input == "/exit" || input == "/quit" || input == "/q")
+		close();
+	else
+		channel.send(input).catch(console.error);
+});
 
 // log the bot in
 client.login(config.token);
