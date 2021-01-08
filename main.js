@@ -8,7 +8,7 @@ catch (err) { console.error("Eror: config.json not found"); process.exit(1); }
 
 var channel; // channel to send stuff to
 
-client.on('ready', async () => 
+client.on('ready', async () =>
 {
 	try
 	{
@@ -26,23 +26,27 @@ const rl = readline.createInterface
 });
 
 // close everything
-function close()
-{
-	client.destroy();
-	rl.close();
-}
+function close() { client.destroy(); rl.close(); }
 
 // closing with ctrl-d or ctrl-c
 rl.on("close", close);
 
 // relay every line to discord
-rl.on("line", input => 
+rl.on("line", input =>
 {
 	// quitting
 	if (input == "/exit" || input == "/quit" || input == "/q")
 		close();
 	else
 		channel.send(input).catch(console.error);
+});
+
+// relay everything from the channel to terminal
+client.on('message', msg =>
+{
+	// not sent by the bot and in the IRC channel
+	if (msg.author != client.user && msg.channel == config.channel[1])
+		console.log(msg.content);
 });
 
 // log the bot in
