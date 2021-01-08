@@ -1,13 +1,37 @@
 const readline = require("readline"); // for taking input from terminal
 const Discord = require("discord.js");
 const client = new Discord.Client(); // bot client
+const colors = require("./color-scheme.json");
+
 var config;
 // config
 try { config = require("./config.json"); }
 catch (err) { console.error("Eror: config.json not found"); process.exit(1); }
 
+// enable or disable colors
+Object.keys(colors).forEach(key =>
+{
+	const color = colors[key].split(' ');
+	// do use colors
+	if (config.color && color.length >= 1)
+		colors[key] = color[0];
+	else
+		colors[key] = color[1] || ((key == 'd') ? '0' : colors.d);
+});
+
 var channel; // channel to send stuff to
 var lastAuthor;
+
+// color formatting
+function format(str)
+{
+	Object.keys(colors).forEach(key =>
+		str = str.replace(RegExp(`<${key}>`, 'g'), `\x1b[${colors[key]}m`)
+	);
+	return str;
+}
+// formats and then logs
+function flog() { console.log.apply(null, Array.from(arguments).map(arg => format(arg))); }
 
 client.on('ready', async () =>
 {
@@ -75,13 +99,13 @@ client.on('message', msg =>
 	{
 		lastAuthor = msg.author; // update last author
 		// attachments
-		let atstr = msg.attachments.map(a => a.url).join("'\t'");
-		atstr = atstr ? `\x1b[1mAttachment(s)\x1b[0m: '${atstr}'` : "";
+		let atstr = msg.attachments.map(a => a.url).join('\t');
+		atstr = atstr ? `<st>Attachment(s)<d>: <url>${atstr}<d>` : "";
 		// content to post
 		let content = (msg.content && atstr) ?
 			`${msg.content}\n\t${atstr}` :
 			(atstr || msg.content);
-		console.log(`\x1b[1m${msg.author.tag}\x1b[0m: ${content}`);
+		flog(`<t>${msg.author.tag}<d>: ${content}`);
 	}
 });
 

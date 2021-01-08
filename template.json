@@ -1,4 +1,5 @@
 {
 	"token": "bot token",
-	"channel": ["guild id", "channel id"]
+	"channel": ["guild id", "channel id"],
+	"color": true
 }
