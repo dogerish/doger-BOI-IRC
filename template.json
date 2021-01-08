@@ -1,0 +1,4 @@
+{
+	"token": "bot token",
+	"channel": ["guild id", "channel id"]
+}
