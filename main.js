@@ -1,5 +1,4 @@
 const readline = require("readline"); // for taking input from terminal
-const util = require("util"); // for formatting string
 const Discord = require("discord.js");
 const client = new Discord.Client(); // bot client
 var config;
