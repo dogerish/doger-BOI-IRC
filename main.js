@@ -1,4 +1,5 @@
 const readline = require("readline"); // for taking input from terminal
+const util = require("util"); // for formatting string
 const Discord = require("discord.js");
 const client = new Discord.Client(); // bot client
 var config;
@@ -7,6 +8,7 @@ try { config = require("./config.json"); }
 catch (err) { console.error("Eror: config.json not found"); process.exit(1); }
 
 var channel; // channel to send stuff to
+var lastAuthor;
 
 client.on('ready', async () =>
 {
@@ -34,11 +36,30 @@ rl.on("close", close);
 // relay every line to discord
 rl.on("line", input =>
 {
-	// quitting
-	if (input == "/exit" || input == "/quit" || input == "/q")
-		close();
-	else
-		channel.send(input).catch(console.error);
+	// commands
+	if (input.startsWith('/'))
+	{
+		let space = input.match(/\s/);
+		const command = input.substr(0, space ? space.index : input.length);
+		// replace command part of string
+		function repcmd(now) { input = input.replace(command, now); }
+
+		switch (command.substr(1))
+		{
+			// quitting
+			case "exit":
+			case "quit":
+			case "q":
+				close();
+				return;
+			// ping reply to last message
+			case "reply":
+				// put ping in front of message if there's a last author
+				repcmd(lastAuthor || "");
+				break;
+		}
+	}
+	channel.send(input).catch(console.error);
 });
 
 // relay everything from the channel to terminal
@@ -46,7 +67,10 @@ client.on('message', msg =>
 {
 	// not sent by the bot and in the IRC channel
 	if (msg.author != client.user && msg.channel == config.channel[1])
-		console.log(`${msg.author.username}: ${msg.content}`);
+	{
+		lastAuthor = msg.author; // update last author
+		console.log(`\x1b[1m${msg.author.tag}\x1b[0m: ${msg.content}`);
+	}
 });
 
 // log the bot in
