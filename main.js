@@ -1,8 +1,10 @@
 const readline = require("readline"); // for taking input from terminal
 const Discord = require("discord.js");
 const client = new Discord.Client(); // bot client
+var config;
 // config
-const config = require("./config.json");
+try { config = require("./config.json"); }
+catch (err) { console.error("Eror: config.json not found"); process.exit(1); }
 
 var channel; // channel to send stuff to
 
