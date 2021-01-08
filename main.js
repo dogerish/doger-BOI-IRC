@@ -68,7 +68,14 @@ client.on('message', msg =>
 	if (msg.author != client.user && msg.channel == config.channel[1])
 	{
 		lastAuthor = msg.author; // update last author
-		console.log(`\x1b[1m${msg.author.tag}\x1b[0m: ${msg.content}`);
+		// attachments
+		let atstr = msg.attachments.map(a => a.url).join("'\t'");
+		atstr = atstr ? `\x1b[1mAttachment(s)\x1b[0m: '${atstr}'` : "";
+		// content to post
+		let content = (msg.content && atstr) ?
+			`${msg.content}\n\t${atstr}` :
+			(atstr || msg.content);
+		console.log(`\x1b[1m${msg.author.tag}\x1b[0m: ${content}`);
 	}
 });
 
