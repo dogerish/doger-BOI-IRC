@@ -46,7 +46,7 @@ client.on('message', msg =>
 {
 	// not sent by the bot and in the IRC channel
 	if (msg.author != client.user && msg.channel == config.channel[1])
-		console.log(msg.content);
+		console.log(`${msg.author.username}: ${msg.content}`);
 });
 
 // log the bot in
