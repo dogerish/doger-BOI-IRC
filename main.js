@@ -94,8 +94,9 @@ rl.on("line", input =>
 // relay everything from the channel to terminal
 client.on('message', msg =>
 {
-	// not sent by the bot and in the IRC channel
-	if (msg.author != client.user && msg.channel == config.channel[1])
+	inDM = (msg.channel.type == "dm");
+	// not sent by the bot and in the IRC channel or a DM
+	if (msg.author != client.user && (msg.channel == config.channel[1] || inDM))
 	{
 		lastAuthor = msg.author; // update last author
 		// attachments
@@ -105,7 +106,7 @@ client.on('message', msg =>
 		let content = (msg.content && atstr) ?
 			`${msg.content}\n\t${atstr}` :
 			(atstr || msg.content);
-		flog(`<t>${msg.author.tag}<d>: ${content}`);
+		flog(`${inDM ? "<st>(DM) " : ""}<t>${msg.author.tag}<d>: ${content}`);
 	}
 });
 
